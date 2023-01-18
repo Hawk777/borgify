@@ -162,7 +162,7 @@ fn run_with_root(
 			"--compression",
 			&archive.compression,
 		])
-		.args(archive.patterns.iter().flat_map(|i| ["--pattern", i]))
+		.args(archive.patterns.iter().map(|i| format!("--pattern={i}")))
 		.arg(format!("::{archive_name}-{timestamp_local}"))
 		.arg(".")
 		.env("BORG_REPO", OsStr::new(archive.repository.as_ref()))
