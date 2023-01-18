@@ -86,3 +86,6 @@ When `borg create` is invoked, Borgify passes the following options:
 The archive name comprises the key in the `archives` object, a hyphen, and the
 run timestamp (the same as passed to `--timestamp`), converted to your local
 timezone.
+
+The `BORG_FILES_CACHE_SUFFIX` environment variable will be set equal to the
+archive name (aka the key in the `archives` section).

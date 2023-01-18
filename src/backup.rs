@@ -165,7 +165,8 @@ fn run_with_root(
 		.args(archive.patterns.iter().flat_map(|i| ["--pattern", i]))
 		.arg(format!("::{archive_name}-{timestamp_local}"))
 		.arg(".")
-		.env("BORG_REPO", OsStr::new(archive.repository.as_ref()));
+		.env("BORG_REPO", OsStr::new(archive.repository.as_ref()))
+		.env("BORG_FILES_CACHE_SUFFIX", archive_name);
 	let passphrase_pipe_reader = if let Some(passphrase) = passphrase {
 		let passphrase_pipe_reader =
 			super::passphrase::send_to_inheritable_pipe(passphrase).map_err(Error::Spawn)?;
