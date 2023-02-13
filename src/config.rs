@@ -86,11 +86,11 @@ impl<'raw> ParsedArchive<'raw> {
 	) -> Result<Archive<'raw>, D::Error> {
 		for pattern in &self.patterns {
 			match pattern.chars().next() {
-				Some('+') | Some('-') | Some('P') => (),
+				Some('+') | Some('-') | Some('!') | Some('P') => (),
 				_ => {
 					return Err(D::Error::invalid_value(
 						serde::de::Unexpected::Str(pattern),
-						&"Borg pattern specification starting with +, -, or P",
+						&"Borg pattern specification starting with +, -, !, or P",
 					))
 				}
 			}
