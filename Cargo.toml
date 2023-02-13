@@ -1,6 +1,6 @@
 [package]
 name = "borgify"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Christopher Head <chead@chead.ca>"]
 edition = "2021"
 description = "An opinionated wrapper to run Borg backup"
