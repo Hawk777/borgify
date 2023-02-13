@@ -62,10 +62,13 @@ impl std::error::Error for Error {
 
 /// Tries to examine a repository. If a passphrase is needed, asks for the passphrase and
 /// re-examines the repository to verify the passphrase.
-fn check_repository_and_query_passphrase(repository: &str) -> Result<Option<String>, Error> {
+fn check_repository_and_query_passphrase(
+	repository: &str,
+	umask: u16,
+) -> Result<Option<String>, Error> {
 	let mut pw: Option<String> = None;
 	loop {
-		match check::run(repository, pw.as_deref()) {
+		match check::run(repository, pw.as_deref(), umask) {
 			Ok(()) => break Ok(pw),
 			Err(check::Error::Passphrase) => {
 				if pw.is_some() {
@@ -102,7 +105,10 @@ fn run() -> Result<ExitCode, Error> {
 		let mut passphrases: HashMap<&str, Option<String>> = HashMap::new();
 		for archive in config.archives.values() {
 			if let Entry::Vacant(entry) = passphrases.entry(&archive.repository) {
-				entry.insert(check_repository_and_query_passphrase(&archive.repository)?);
+				entry.insert(check_repository_and_query_passphrase(
+					&archive.repository,
+					config.umask,
+				)?);
 			}
 		}
 		passphrases
@@ -131,6 +137,7 @@ fn run() -> Result<ExitCode, Error> {
 				.get(&*archive.repository)
 				.expect("passphrase missing from map, but we already examined every repository")
 				.as_deref(),
+			config.umask,
 		)
 		.map_err(|e| Error::Backup(name.clone().into_owned(), e))?;
 		println!();

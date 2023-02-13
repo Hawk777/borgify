@@ -31,6 +31,9 @@ pub struct Archive<'raw> {
 pub struct Config<'raw> {
 	/// The requested archives.
 	pub archives: BTreeMap<Cow<'raw, str>, Archive<'raw>>,
+
+	/// The umask.
+	pub umask: u16,
 }
 
 impl<'de> Deserialize<'de> for Config<'de> {
@@ -113,6 +116,36 @@ impl<'raw> ParsedArchive<'raw> {
 	}
 }
 
+/// Returns the default umask, used if one is not written in the config file.
+const fn default_umask() -> u16 {
+	0o0077
+}
+
+/// Decodes a umask from a three- or four-digit octal string.
+fn deserialize_umask<'de, D: Deserializer<'de>>(d: D) -> Result<u16, D::Error> {
+	use serde::de::{Unexpected, Visitor};
+	use std::fmt::Formatter;
+	struct Vis;
+	impl Visitor<'_> for Vis {
+		type Value = u16;
+
+		fn expecting(&self, f: &mut Formatter<'_>) -> Result<(), std::fmt::Error> {
+			write!(f, "an octal umask ≤777")
+		}
+
+		fn visit_str<E: serde::de::Error>(self, value: &str) -> Result<u16, E> {
+			let parsed = u16::from_str_radix(value, 8)
+				.map_err(|_| E::invalid_value(Unexpected::Str(value), &self))?;
+			if parsed <= 0o777 {
+				Ok(parsed)
+			} else {
+				Err(E::invalid_value(Unexpected::Str(value), &self))
+			}
+		}
+	}
+	d.deserialize_str(Vis)
+}
+
 /// The intermediate JSON-parsed form of the config file.
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -124,6 +157,10 @@ struct ParsedConfig<'raw> {
 	/// The archives section.
 	#[serde(borrow)]
 	archives: BTreeMap<Cow<'raw, str>, ParsedArchive<'raw>>,
+
+	/// The umask option.
+	#[serde(default = "default_umask", deserialize_with = "deserialize_umask")]
+	umask: u16,
 }
 
 impl<'raw> ParsedConfig<'raw> {
@@ -137,6 +174,7 @@ impl<'raw> ParsedConfig<'raw> {
 					Ok((name, ParsedArchive::finish::<D>(archive, &self.defaults)?))
 				})
 				.collect::<Result<BTreeMap<Cow<'raw, str>, Archive<'raw>>, D::Error>>()?,
+			umask: self.umask,
 		})
 	}
 }

@@ -270,7 +270,7 @@ fn test_handle_output_invalid_json() {
 
 /// Tries to examine a repository and verify that it exists and is accessible with a given
 /// passphrase.
-pub fn run(repository: &str, passphrase: Option<&str>) -> Result<(), Error> {
+pub fn run(repository: &str, passphrase: Option<&str>, umask: u16) -> Result<(), Error> {
 	// If no passphrase is provided, then use an arbitrary passphrase. If it fails, it will fail
 	// with an “incorrect passphrase” error, which is exactly what we want when a passphrase is
 	// required and was not given. If the repository is unencrypted, then it will succeed because
@@ -282,6 +282,8 @@ pub fn run(repository: &str, passphrase: Option<&str>) -> Result<(), Error> {
 	// Spawn the process.
 	let mut child = Command::new("borg")
 		.arg("--log-json")
+		.arg("--umask")
+		.arg(format!("0{umask:o}"))
 		.arg("info")
 		.env(
 			"BORG_PASSPHRASE_FD",

@@ -129,6 +129,7 @@ fn run_with_root(
 	timestamp_local: &str,
 	passphrase: Option<&str>,
 	root: impl AsFd,
+	umask: u16,
 ) -> Result<bool, Error> {
 	// Launch Borg.
 	let mut child = Command::new("borg");
@@ -153,7 +154,7 @@ fn run_with_root(
 			"--progress",
 			"--iec",
 			"--umask",
-			"0027",
+			&format!("0{umask:o}"),
 			"create",
 			"--stats",
 			"--exclude-caches",
@@ -291,6 +292,7 @@ fn do_snapshot(
 	timestamp_local: &str,
 	passphrase: Option<&str>,
 	archive_root: &File,
+	umask: u16,
 ) -> Result<bool, Error> {
 	// Create a snapshot at a unique path which is a sibling to the root.
 	let snapshot = Snapshot::create(archive_root, archive.root.as_os_str().as_bytes())?;
@@ -304,6 +306,7 @@ fn do_snapshot(
 		timestamp_local,
 		passphrase,
 		&snapshot.snapshot_fd,
+		umask,
 	);
 
 	// Delete the snapshot.
@@ -329,6 +332,7 @@ pub fn run(
 	timestamp_utc: &str,
 	timestamp_local: &str,
 	passphrase: Option<&str>,
+	umask: u16,
 ) -> Result<bool, Error> {
 	let archive_root = File::options()
 		.read(true)
@@ -343,6 +347,7 @@ pub fn run(
 			timestamp_local,
 			passphrase,
 			&archive_root,
+			umask,
 		)
 	} else {
 		run_with_root(
@@ -352,6 +357,7 @@ pub fn run(
 			timestamp_local,
 			passphrase,
 			archive_root,
+			umask,
 		)
 	}
 }
