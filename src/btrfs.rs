@@ -21,11 +21,11 @@ mod ioctl {
 	/// The size of a UUID used with btrfs ioctls.
 	pub const UUID_SIZE: usize = 16;
 
-	/// A flag to [`snap_create_v2`](snap_create_v2) to make the new subvolume read-only.
+	/// A flag to [`snap_create_v2`] to make the new subvolume read-only.
 	pub const SUBVOL_RDONLY: u64 = 1 << 1;
 
-	/// A flag to [`snap_destroy_v2`](snap_destroy_v2) to find the subvolume to destroy by
-	/// subvolume ID rather than by name.
+	/// A flag to [`snap_destroy_v2`] to find the subvolume to destroy by subvolume ID rather than
+	/// by name.
 	pub const SUBVOL_SPEC_BY_ID: u64 = 1 << 4;
 
 	/// A representation of a timestamp in a btrfs ioctl.
@@ -36,7 +36,7 @@ mod ioctl {
 		pub nsec: u32,
 	}
 
-	/// The identification of an object on which to operate, used as part of [`ArgsV2`](ArgsV2).
+	/// The identification of an object on which to operate, used as part of [`ArgsV2`].
 	#[repr(C)]
 	pub union ArgsV2Identifier {
 		pub name: [u8; SUBVOL_NAME_MAX + 1],
@@ -129,7 +129,7 @@ impl From<std::io::Error> for Error {
 	}
 }
 
-/// A result type whose error type is [`Error`](Error).
+/// A result type whose error type is [`Error`].
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Checks whether a given file handle refers to a something on a Btrfs filesystem.

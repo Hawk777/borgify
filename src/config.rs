@@ -82,7 +82,7 @@ struct ParsedArchive<'raw> {
 }
 
 impl<'raw> ParsedArchive<'raw> {
-	/// Converts a `ParsedArchive` into an [`Archive`](Archive).
+	/// Converts a `ParsedArchive` into an [`Archive`].
 	fn finish<D: Deserializer<'raw>>(
 		self,
 		defaults: &ParsedDefaults<'raw>,
@@ -164,7 +164,7 @@ struct ParsedConfig<'raw> {
 }
 
 impl<'raw> ParsedConfig<'raw> {
-	/// Converts a `ParsedConfig` into a [`Config`](Config).
+	/// Converts a `ParsedConfig` into a [`Config`].
 	fn finish<D: Deserializer<'raw>>(self) -> Result<Config<'raw>, D::Error> {
 		Ok(Config {
 			archives: self
