@@ -53,8 +53,8 @@ defined:
 * `patterns`: Array of string, optional (absent is equivalent to empty array).
   One or more [Borg include/exclude
   patterns](https://borgbackup.readthedocs.io/en/stable/usage/help.html#borg-patterns),
-  each starting with either `+`, `-`, or `P` (`R` is prohibited), each of which
-  will be passed to Borg via `--pattern`.
+  each starting with either `+`, `-`, `P`, or `!` (`R` is prohibited), each of
+  which will be passed to Borg via `--pattern`.
 
 
 Operation
