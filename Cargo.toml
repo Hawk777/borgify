@@ -18,7 +18,7 @@ version = "^1.1.6"
 [dependencies.nix]
 default-features = false
 features = ["ioctl"]
-version = "^0.26.1"
+version = "^0.28.0"
 
 [dependencies.os_pipe]
 features = ["io_safety"]
