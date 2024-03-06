@@ -96,6 +96,12 @@ fn check_archive_root(root: &Path) -> std::io::Result<()> {
 
 /// The top-level application logic.
 fn run() -> Result<ExitCode, Error> {
+	// Ignore SIGINT so that it will only kill the borg processes, if any are running, and
+	// propagate back to the borgify process in the form of a subprocess failure rather than a
+	// signal.
+	// SAFETY: The passed-in parameters are locally constructed properly.
+	unsafe { libc::signal(libc::SIGINT, libc::SIG_IGN) };
+
 	// Load the config file.
 	let config = std::fs::read("/etc/borgify.json").map_err(Error::ConfigLoad)?;
 	let config: config::Config = serde_json::from_slice(&config).map_err(Error::ConfigParse)?;

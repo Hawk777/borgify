@@ -137,6 +137,10 @@ fn run_with_root(
 	// SAFETY: The lambda just calls fchdir, which is documented as signal-safe.
 	unsafe {
 		child.pre_exec(move || {
+			// Allow SIGINT to reach the borg process.
+			// SAFETY: The passed-in parameters are locally constructed properly.
+			libc::signal(libc::SIGINT, libc::SIG_DFL);
+
 			// SAFETY: The root parameter (of type impl AsFd) lives for the duration of
 			// run_with_root, which, if it successfully spawns the child, has created a new process
 			// in which the descriptor remains valid even if closed in the parent.
