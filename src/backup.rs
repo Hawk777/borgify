@@ -33,6 +33,7 @@ pub enum Error {
 	Spawn(std::io::Error),
 
 	/// The `borg` executable terminated with exit code 2, indicating an error.
+	#[allow(clippy::enum_variant_names)] // Not the enum name, but the specific kind of exit.
 	ErrorStatus,
 
 	/// The `borg` executable terminated with an exit code other than 0, 1, or 2, which is not

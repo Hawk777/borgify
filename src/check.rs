@@ -27,6 +27,7 @@ pub enum Error {
 
 	/// The `borg` executable terminated with exit code 2, indicating an error, but did not print
 	/// an error message.
+	#[allow(clippy::enum_variant_names)] // Not the enum name, but the specific kind of exit.
 	ErrorStatusWithoutMessage,
 
 	/// The `borg` executable terminated with an exit code other than 0, 1, or 2, which is not
