@@ -227,13 +227,8 @@ impl Snapshot {
 	/// On success, returns whether any warnings were generated, and the path to the snapshot.
 	fn create(source: &File, hash_seed: &[u8]) -> Result<Self, Error> {
 		// Open the parent directory of the archive root.
-		let parent = openat(
-			source,
-			CStr::from_bytes_with_nul(b"..\0").unwrap(),
-			libc::O_DIRECTORY,
-			0,
-		)
-		.map_err(Error::OpenArchiveRootParent)?;
+		let parent =
+			openat(source, c"..", libc::O_DIRECTORY, 0).map_err(Error::OpenArchiveRootParent)?;
 
 		// Try to create a “randomly” (actually an SHA256 of a seed value and a counter) named
 		// subvolume, repeatedly, until we don’t collide with an existing name.
